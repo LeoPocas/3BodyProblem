@@ -4,8 +4,8 @@ from matplotlib.animation import FuncAnimation
 from scipy.integrate import solve_ivp
 
 # Constante gravitacional fictícia (ajustada para evitar números extremamente pequenos)
-G = 1e1
-MAX_ACCELERATION = 10
+G = 6.67
+MAX_ACCELERATION = 100
 
 # Função que define o sistema de equações diferenciais
 def three_body(t, y, m1, m2, m3):
@@ -33,16 +33,16 @@ def three_body(t, y, m1, m2, m3):
     return np.concatenate((v1, v2, v3, a1, a2, a3))
 
 # Parâmetros dos corpos (massas fictícias)
-m1, m2, m3 = 2.0, 2.0, 2.0
+m1, m2, m3 = 20, 20, 20
 
 # Condições iniciais
 y0_base = [
-    -1.5, 0.0,  # Posição do corpo 1
-     1.5, 0.0,  # Posição do corpo 2
-     0.0, 2.59,  # Posição do corpo 3
-     1.4, 1.4,  # Velocidade do corpo 1
+    -1.3, -1.0,  # Posição do corpo 1
+     1.3, -1.0,  # Posição do corpo 2
+     0.0, 1.59,  # Posição do corpo 3
+     1.3, 1.3,  # Velocidade do corpo 1
     -1.5, -1.7, # Velocidade do corpo 2
-     2, -1.6  # Velocidade do corpo 3
+     1.6, -1.3    # Velocidade do corpo 3
 ]
 
 # Intervalo de tempo e pontos de avaliação
@@ -92,15 +92,15 @@ ax.set_ylabel("y")
 ax.legend(loc='upper right', fontsize='small')
 
 # Salvar o gráfico como imagem
-plt.savefig("three_body_routes.png")
+plt.savefig("three_body_routes3.png")
 
 # Exibir o gráfico
 plt.show()
 
 # Criar o gráfico base para a animação
 fig, ax = plt.subplots(figsize=(8, 8))
-ax.set_xlim(-6, 6)
-ax.set_ylim(-6, 6)
+ax.set_xlim(-16, 16)
+ax.set_ylim(-16, 16)
 ax.set_title("Three-Body Problem - Trajetórias")
 ax.set_xlabel("x")
 ax.set_ylabel("y")
@@ -146,7 +146,7 @@ def update(frame):
 ani = FuncAnimation(fig, update, frames=len(t_eval), init_func=init, interval=20, blit=True)
 
 # Salvar a animação como vídeo. Substitua "ffmpeg" por "pillow" se não tiver ffmpeg instalado
-ani.save("three_body_simulation.gif", writer="pillow")
+ani.save("three_body_simulation3.gif", writer="pillow")
 
 # Exibir o gráfico para validação
 plt.show()

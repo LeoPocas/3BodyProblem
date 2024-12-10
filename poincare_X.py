@@ -2,12 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
-# Constante gravitacional fictícia (ajustada para evitar números extremamente pequenos)
+# Constante gravitacional fictícia
 G = 6.67
-y_target = -10.0
-
-def on_click(event):
-    print(f"Você clicou em: x = {event.xdata}, y = {event.ydata}")
+x_target = 8  # Valor de x para a análise
 
 # Função que define o sistema de equações diferenciais
 def three_body(t, y, m1, m2, m3):
@@ -38,15 +35,14 @@ y0 = [
     -1.3, -1.0,  # Posição do corpo 1
      1.3, -1.0,  # Posição do corpo 2
      0.0, 1.59,  # Posição do corpo 3
-     1.3, 1.3,  # Velocidade do corpo 1
-    -1.5, -1.7, # Velocidade do corpo 2
-     1.6, -1.3    # Velocidade do corpo 3
+     1.3, 1.3,   # Velocidade do corpo 1
+    -1.5, -1.7,  # Velocidade do corpo 2
+     1.6, -1.3   # Velocidade do corpo 3
 ]
 
-
 # Intervalo de tempo e pontos de avaliação
-t_span = (0, 50)  # Por exemplo, aumente de 20 para 100 ou mais.
-t_eval = np.linspace(*t_span, 3000)  # Mais pontos para análise precisa.
+t_span = (0, 50)
+t_eval = np.linspace(*t_span, 3000)
 
 # Resolver o sistema
 sol = solve_ivp(three_body, t_span, y0, args=(m1, m2, m3), t_eval=t_eval, rtol=1e-9, atol=1e-9)
@@ -54,31 +50,32 @@ sol = solve_ivp(three_body, t_span, y0, args=(m1, m2, m3), t_eval=t_eval, rtol=1
 # Extrair dados
 r1, v1 = sol.y[:2], sol.y[6:8]
 
-# Identificar cruzamentos com o plano y=0
+# Identificar cruzamentos com o plano x=x_target
 crossings = []
-tolerance = 0.05  # Tolerância em torno de y_target
+tolerance = 0.05  # Tolerância em torno de x_target
 
 for i in range(1, len(t_eval)):
-    # Verificar se y cruza y_target com tolerância
-    if (r1[1, i-1] - y_target) * (r1[1, i] - y_target) < 0:
+    # Verificar se x cruza x_target com tolerância
+    if (r1[0, i-1] - x_target) * (r1[0, i] - x_target) < 0:
         # Interpolação linear para encontrar o cruzamento
-        x_cross = r1[0, i-1] + (r1[0, i] - r1[0, i-1]) * (y_target - r1[1, i-1]) / (r1[1, i] - r1[1, i-1])
-        vx_cross = v1[0, i-1] + (v1[0, i] - v1[0, i-1]) * (y_target - r1[1, i-1]) / (r1[1, i] - r1[1, i-1])
-        crossings.append((x_cross, vx_cross))
+        y_cross = r1[1, i-1] + (r1[1, i] - r1[1, i-1]) * (x_target - r1[0, i-1]) / (r1[0, i] - r1[0, i-1])
+        vy_cross = v1[1, i-1] + (v1[1, i] - v1[1, i-1]) * (x_target - r1[0, i-1]) / (r1[0, i] - r1[0, i-1])
+        crossings.append((y_cross, vy_cross))
 
 # Separar as coordenadas dos cruzamentos
-x_cross, vx_cross = zip(*crossings)
+y_cross, vy_cross = zip(*crossings)
 
 # Plotar a seção de Poincaré
 plt.figure(figsize=(10, 10))
-scatter = plt.scatter(x_cross, vx_cross, c=range(len(x_cross)), cmap='viridis', s=10, alpha=0.9)
+scatter = plt.scatter(y_cross, vy_cross, c=range(len(y_cross)), cmap='viridis', s=10, alpha=0.9)
 plt.colorbar(scatter, label='Ordem dos cruzamentos')
-plt.title("Seção de Poincaré (y = 0, Corpo 1)")
-plt.xlabel("x")
-plt.ylabel("vx")
-plt.xlim(0, 10) 
-plt.ylim(-15, 25)
+plt.title("Seção de Poincaré (x = {:.1f}, Corpo 1)".format(x_target))
+
+plt.xlabel("y")
+plt.ylabel("vy")
+plt.xlim(-15, -5)
+plt.ylim(-30, 30)
 plt.grid(True)
 
-plt.savefig("poincare_section_y_target-10.png", dpi=300, bbox_inches='tight')
+plt.savefig("poincare_section_x_target+8.png", dpi=300, bbox_inches='tight')
 plt.show()
