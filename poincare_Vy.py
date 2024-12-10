@@ -29,8 +29,8 @@ y0 = [
     -1.3, -1.0, 1.3, -1.0, 0.0, 1.59,
     1.3, 1.3, -1.5, -1.7, 1.6, -1.3
 ]
-t_span = (0, 200)
-t_eval = np.linspace(*t_span, 1000)
+t_span = (0, 10)
+t_eval = np.linspace(*t_span, 16000)
 
 # Resolver o sistema
 sol = solve_ivp(three_body, t_span, y0, args=(m1, m2, m3), t_eval=t_eval, rtol=1e-9, atol=1e-9)

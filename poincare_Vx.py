@@ -29,8 +29,8 @@ y0 = [
     -1.3, -1.0, 1.3, -1.0, 0.0, 1.59,
     1.3, 1.3, -1.5, -1.7, 1.6, -1.3
 ]
-t_span = (0, 200)
-t_eval = np.linspace(*t_span, 3000)
+t_span = (0, 10)
+t_eval = np.linspace(*t_span, 17500)
 
 # Resolver o sistema
 sol = solve_ivp(three_body, t_span, y0, args=(m1, m2, m3), t_eval=t_eval, rtol=1e-9, atol=1e-9)
@@ -39,7 +39,7 @@ r1, v1 = sol.y[:2], sol.y[6:8]  # Posição e velocidade do Corpo 1
 
 # Detectar cruzamentos onde v_x = 0
 crossings_vx = []
-tolerance = 0.05  # Tolerância
+tolerance = 0.02  # Tolerância
 
 for i in range(1, len(t_eval)):
     if (v1[0, i-1] * v1[0, i]) < 0:  # Detectar cruzamento
